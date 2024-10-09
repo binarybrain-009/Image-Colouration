@@ -86,22 +86,22 @@ The approach involves building a convolutional neural network (CNN) that learns 
 <img src="Images/LAB.png" alt="Trulli" class="custom-img"/>
 <ol>
   <li>
-    Data Representation:
+    <b>Data Representation</b>:
     Convert images to their corresponding grayscale image to be used as input to the model and the original image as an output.
   </li>
 
   <li>
-    Model Architectures:
-		For our first set of experiments, we intend to use a simple CNN based encoder-decoder architecture. Following that we intend to use U-Net with a VGG backbone, where the encoder learns latent grayscale features and the decoder reconstructs the color information. The extracted features will be fed into the decoder to predict the color channels, A* and B*. Finally, we intend to use GANs with the U-net model as the Generator.
+  <b>Model Architectures</b>:
+		For our first set of experiments, we intend to use a simple CNN based encoder-decoder architecture. Following that we intend to use U-Net with a VGG/Resnet backbone, where the encoder learns latent grayscale features and the decoder reconstructs the color information. The extracted features will be fed into the decoder to predict the color channels, A* and B*. Finally, we intend to use GANs with the U-net model as the Generator.
   </li>
 
   <li>
-    Loss Function:
-    Mean Squared Error (MSE) between predicted and actual images to measure pixel-wise accuracy. We also intend to incorporate adversarial loss for GAN networks and experiment with them.
+    <b>Loss Function</b>:
+    Mean Squared Error (MSE) between predicted and actual images to measure pixel-wise accuracy. We also intend to incorporate adversarial loss for GAN networks.
   </li>
 
   <li>
-    Optimization: 
+    <b>Optimization</b>: 
     The model will be trained using the Adam optimizer with learning rate scheduling to adjust learning rates dynamically.
   </li>
 
@@ -118,7 +118,7 @@ The approach involves building a convolutional neural network (CNN) that learns 
   </li><br>
 
   <li>
-    <b>Experimental setup:</b> We plan to conduct the experiments on our personal laptops having RTX 3060 6GB GPU. The code implementation will be done in Python employing the use of frameworks like Pytorch, Tensorflow and fastai.
+    <b>Experimental setup:</b> We plan to conduct the experiments on our personal laptops having RTX 3060 6GB GPU. For Jupyter notebooks, we plan to use Google Colab. The code implementation will be done in Python employing the use of frameworks like Pytorch, Tensorflow and fastai.
   </li><br>
 
   <li>
@@ -144,9 +144,6 @@ The approach involves building a convolutional neural network (CNN) that learns 
             Loss Function:Mean Squared Error (MSE) between predicted and actual A and B channels to measure pixel-wise accuracy.
           </li>
           <li>
-            Perceptual Loss: Arch like ResNet, VGG etc will be used to compute a perceptual loss that ensures colorized images look realistic based on higher-level image features.
-          </li>
-          <li>
             Optimization: The model will be trained using the Adam optimizer with learning rate scheduling to adjust learning rates dynamically.
           </li>
         </ul>
@@ -162,7 +159,7 @@ The approach involves building a convolutional neural network (CNN) that learns 
     <b>Definition for success of project:</b> 
     <ul>
       <li>
-        As we move from CNN to U-net to GAN, the quality of image should improve especially with the incorporation of adversarial training in GANs.
+        As we move from CNN-based encoder-decoder to U-net to GAN, the quality of image should improve especially with the incorporation of adversarial training in GANs.
       </li>
       <li>
         To quantify the metrics we will look at MSE, IOU (Intersection over Union) 
@@ -172,7 +169,7 @@ The approach involves building a convolutional neural network (CNN) that learns 
 
   <li><b>List of experiments to be performed:</b>
     <ul>
-      <li>Training a simple CNN encoder-decoder</li>
+      <li>Training a simple CNN-based encoder-decoder</li>
       <li>Training a UNET architecture without adversarial training</li>
       <li>Train a GAN with adversarial training</li>
     </ul>
