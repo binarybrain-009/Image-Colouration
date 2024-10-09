@@ -9,8 +9,15 @@
   <meta name="author" content="">
 
 <!-- Le styles -->  
-  <link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
 <style>
+
+.custom-img {
+    width: 3000; /* or set a specific value like 500px */
+    height: 3000; /* Maintains the aspect ratio */
+    object-fit: contain; /* Ensures the image fits inside the container without distortion */
+}
+
 body {
 padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 }
@@ -34,7 +41,7 @@ color: #FF9900;
 <div class="page-header">
 
 <!-- Title and Name --> 
-<h1>Image Colouration</h1> 
+<h1>Image Coloration</h1> 
 <span style="font-size: 20px; line-height: 1.5em;"><strong>Gauransh Sawhney, Daksh Dave, Tushar Deshpande</strong></span><br>
 <span style="font-size: 18px; line-height: 1.5em;">Fall 2024 ECE 4554/5554 Computer Vision: Course Project</span><br>
 <span style="font-size: 18px; line-height: 1.5em;">Virginia Tech</span>
@@ -44,7 +51,7 @@ color: #FF9900;
 
 <!-- Goal -->
 <h3>Problem Statement</h3>
-This project aims to experiment with various deep learning models to understand their performance in automatic image coloration tasks. By comparing different architectures, the study seeks to analyze how each model addresses the challenges of transforming grayscale images into realistic color versions. The goal is to explore and study the theoretical workings of these models in relation to image coloration.
+This project aims to experiment with various deep learning models to understand their performance in automatic image coloration tasks. By comparing different architectures, the study seeks to analyze how each model addresses the challenges of transforming grayscale images into realistic color versions. The goal is to explore and study the theoretical workings of these models in relation to image coloration and finalise on an architecture that is best suited to image coloration tasks.
 
 <!-- Plans for experiments. Describe the experimental setup you will follow. Describe the datasets you
 plan to use, what code you will implement yourself, what existing code you will borrow (if any), and
@@ -62,6 +69,8 @@ outcomes -->
 <!-- <div style="text-align: center;"> -->
 <!-- <img style="height: 200px;" alt="" src="mainfig.png"> -->
 <!-- </div> -->
+<br><br><br>
+<img src="Images/Diagram.png" alt="Trulli" class="custom-img"/>
 
 <!-- <br><br> -->
 <!-- Introduction -->
@@ -72,25 +81,123 @@ Motivation behind the problem you are solving, what applications it has, any bri
 <!-- Approach -->
 <h3>Approach</h3>
 
-Describe very clearly and systematically your approach to solve the problem. Tell us exactly what existing implementations you used to build your system. Tell us what obstacles you faced and how you addressed them. Justify any design choices or judgment calls you made in your approach.
+The approach involves building a convolutional neural network (CNN) that learns to predict the color information from grayscale images. The image coloration task will be formulated as a supervised learning problem, where grayscale images, consisting of L* channel, are the inputs, and the corresponding color images are the targets which consists of two additional channels, A* and B*.
+<br>
+<img src="Images/LAB.png" alt="Trulli" class="custom-img"/>
+<ol>
+  <li>
+    Data Representation:
+    Convert images to their corresponding grayscale image to be used as input to the model and the original image as an output.
+  </li>
 
-<br><br>
+  <li>
+    Model Architectures:
+		For our first set of experiments, we intend to use a simple CNN based encoder-decoder architecture. Following that we intend to use U-Net with a VGG backbone, where the encoder learns latent grayscale features and the decoder reconstructs the color information. The extracted features will be fed into the decoder to predict the color channels, A* and B*. Finally, we intend to use GANs with the U-net model as the Generator.
+  </li>
+
+  <li>
+    Loss Function:
+    Mean Squared Error (MSE) between predicted and actual images to measure pixel-wise accuracy. We also intend to incorporate adversarial loss for GAN networks and experiment with them.
+  </li>
+
+  <li>
+    Optimization: 
+    The model will be trained using the Adam optimizer with learning rate scheduling to adjust learning rates dynamically.
+  </li>
+
+</ol>
+
+<br>
 <!-- Results -->
 <h3>Plans for experiments</h3>
-Provide details about the experimental set up (number of images/videos, number of datasets you experimented with, train/test split if you used machine learning algorithms, etc.). Describe the evaluation metrics you used to evaluate how well your approach is working. Include clear figures and tables, as well as illustrative qualitative examples if appropriate. Be sure to include obvious baselines to see if your approach is doing better than a naive approach (e.g. for classification accuracy, how well would a classifier do that made random decisions?). Also discuss any parameters of your algorithms, and tell us how you set the values of those parameters. You can also show us how the performance varies as you change those parameter values. Be sure to discuss any trends you see in your results, and explain why these trends make sense. Are the results as expected? Why?
+<!-- Provide details about the experimental set up (number of images/videos, number of datasets you experimented with, train/test split if you used machine learning algorithms, etc.). Describe the evaluation metrics you used to evaluate how well your approach is working. Include clear figures and tables, as well as illustrative qualitative examples if appropriate. Be sure to include obvious baselines to see if your approach is doing better than a naive approach (e.g. for classification accuracy, how well would a classifier do that made random decisions?). Also discuss any parameters of your algorithms, and tell us how you set the values of those parameters. You can also show us how the performance varies as you change those parameter values. Be sure to discuss any trends you see in your results, and explain why these trends make sense. Are the results as expected? Why?-->
+
+<ul>
+  <li>
+    <b>Datasets to be Used:</b> ImageNet-tiny, CIFAR-10, COCO
+  </li><br>
+
+  <li>
+    <b>Experimental setup:</b> We plan to conduct the experiments on our personal laptops having RTX 3060 6GB GPU. The code implementation will be done in Python employing the use of frameworks like Pytorch, Tensorflow and fastai.
+  </li><br>
+
+  <li>
+    <b>Things we will be implementing:</b> 
+    <ul>
+      <li>Data loading </li>
+      <li>
+        Colorization Model functions -> defining the architectures
+      </li>  
+
+      <li>
+        Preprocessing
+      </li>
+
+      <li>
+        Fine tuning the architectures based on the datasets
+      </li>
+
+      <li>
+        Evaluation code:
+        <ul>
+          <li>
+            Loss Function:Mean Squared Error (MSE) between predicted and actual A and B channels to measure pixel-wise accuracy.
+          </li>
+          <li>
+            Perceptual Loss: Arch like ResNet, VGG etc will be used to compute a perceptual loss that ensures colorized images look realistic based on higher-level image features.
+          </li>
+          <li>
+            Optimization: The model will be trained using the Adam optimizer with learning rate scheduling to adjust learning rates dynamically.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li><br>
+
+  <li>
+    <b>Code that will be borrowed:</b> Pre-trained model architecture code for U-Net and GANs (particularly pix2pix architecture).
+  </li><br>
+
+  <li>
+    <b>Definition for success of project:</b> 
+    <ul>
+      <li>
+        As we move from CNN to U-net to GAN, the quality of image should improve especially with the incorporation of adversarial training in GANs.
+      </li>
+      <li>
+        To quantify the metrics we will look at MSE, IOU (Intersection over Union) 
+      </li>
+    </ul>
+  </li><br>
+
+  <li><b>List of experiments to be performed:</b>
+    <ul>
+      <li>Training a simple CNN encoder-decoder</li>
+      <li>Training a UNET architecture without adversarial training</li>
+      <li>Train a GAN with adversarial training</li>
+    </ul>
+  </li><br>
+
+  <li>
+    <b>Expectation from experiments or what is uncertain about the potential of outcomes:</b><br>
+    The model is expected to produce realistic colorizations for a wide variety of images. 
+    However, context-sensitive colorization (e.g., predicting specific object colors) may pose challenges since we take one-channel input image to predict 2 additional channels. 
+
+  </li><br>
+
+</ul>
 
 <!-- <br><br> -->
 
 <!-- Main Results Figure --> 
 <!-- <div style="text-align: center;">
-<img style="height: 300px;" alt="" src="results.png">
+
 </div>
 <br><br> -->
 
 <!-- Results -->
 <!-- <h3>Qualitative results</h3>
 Show several visual examples of inputs/outputs of your system (success cases and failures) that help us better understand your approach. -->
-<br><br>
 
 <!-- Main Results Figure --> 
 <!-- <div style="text-align: center;">
@@ -99,14 +206,14 @@ Show several visual examples of inputs/outputs of your system (success cases and
 <br><br> -->
 
 <!-- Conclusion -->
-<h3>Conclusion</h3>
+<!-- <h3>Conclusion</h3>
 This report has described .... Briefly summarize what you have done. 
-<br><br>
+<br><br> -->
 
 <!-- References -->
-<h3>References</h3>
+<!-- <h3>References</h3>
 Provide a list of references to other work that supported your project.
-<br><br>
+<br><br> -->
 
 
   <hr>
