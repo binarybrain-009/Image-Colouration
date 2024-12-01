@@ -41,7 +41,7 @@ color: #FF9900;
 <div class="page-header">
 
 <!-- Title and Name --> 
-<h1>Image Coloration</h1> 
+<h1>Gray to Glory: Performance Analysis of Image Coloration Models</h1> 
 <span style="font-size: 20px; line-height: 1.5em;"><strong>Gauransh Sawhney, Daksh Dave, Tushar Deshpande</strong></span><br>
 <span style="font-size: 18px; line-height: 1.5em;">Fall 2024 ECE 4554/5554 Computer Vision: Course Project</span><br>
 <span style="font-size: 18px; line-height: 1.5em;">Virginia Tech</span>
@@ -50,9 +50,8 @@ color: #FF9900;
 <!-- Please see <a href="http://vision.cs.utexas.edu/projects/adapted_attributes/">this</a> for an example of how to lay out the various details of your project. You may need to provide more details than this, because you will not be submitting an associated paper to accompany the webpage. So the page should be self-contained. -->
 
 <!-- Goal -->
-<h3>Problem Statement</h3>
-This project aims to experiment with various deep learning models to understand their performance in automatic image coloration tasks. By comparing different architectures, the study seeks to analyze how each model addresses the challenges of transforming grayscale images into realistic color versions. The goal is to explore and study the theoretical workings of these models in relation to image coloration and finalise on an architecture that is best suited to image coloration tasks.
-
+<h3>Abstract</h3>
+Automatic image coloration is a challenging problem in computer vision, motivated by its potential applications in image restoration, enhancement, and creative tasks. This project explores the performance of various deep learning architectures in transforming grayscale images into realistic color versions, aiming to understand the theoretical underpinnings and practical performance of these models. The approach involves experimenting with a progression of architectures: a simple CNN-based encoder-decoder, a U-Net with pre-trained VGG/ResNet backbones, and GAN-based frameworks incorporating adversarial loss. Preliminary results indicate that as model complexity increases, the generated images exhibit improved color fidelity and realism, highlighting the potential of GANs in achieving context-aware and high-quality colorization.
 <!-- Plans for experiments. Describe the experimental setup you will follow. Describe the datasets you
 plan to use, what code you will implement yourself, what existing code you will borrow (if any), and
 what you would define as a success for the project. If you intend to collect your own data, provide a
@@ -79,6 +78,18 @@ Motivation behind the problem you are solving, what applications it has, any bri
 
 <!-- <br><br> -->
 <!-- Approach -->
+<h3>Introduction</h3>
+Image colorization—the process of converting grayscale images into plausible color versions—has garnered significant interest due to its wide-ranging applications, including the restoration of historical photographs, enhancement of medical imaging, and the generation of visually enriched content for creative industries. This task is inherently challenging, as it requires a model to infer appropriate colors based on contextual and semantic information present in the grayscale input.
+
+Traditional methods for image colorization often relied on manual intervention or heuristic algorithms, which were labor-intensive and lacked generalizability across diverse image datasets. The advent of deep learning has revolutionized this field, enabling the development of models that can learn complex mappings from grayscale to color images directly from data. Notable approaches include convolutional neural networks (CNNs) and generative adversarial networks (GANs), which have demonstrated remarkable success in producing realistic colorizations. For instance, Zhang et al. proposed a deep learning approach that combines a CNN with high-level features extracted from a pre-trained model, achieving impressive results in automatic colorization tasks [1]. Similarly, Deshpande et al. introduced a variational approach to produce diverse and contextually appropriate colorizations, highlighting the potential of probabilistic models in this domain [3].
+
+Despite these advancements, challenges remain, particularly in generating contextually accurate and diverse colorizations. Recent research has focused on leveraging generative models to address these issues. Wu et al. introduced a method that utilizes a pretrained GAN to provide rich and diverse color priors, enabling the production of vivid and varied colorizations [2].
+
+In this project, we aim to conduct a comparative study of various deep learning architectures for image colorization, including simple CNN-based encoder-decoders, U-Net architectures with pre-trained backbones, and GAN-based frameworks. By systematically evaluating these models across multiple datasets, we seek to identify the most effective architecture for producing realistic and high-quality colorizations, thereby advancing the current state of the art in automatic image colorization.
+
+
+
+
 <h3>Approach</h3>
 
 The approach involves building a convolutional neural network (CNN) that learns to predict the color information from grayscale images. The image coloration task will be formulated as a supervised learning problem, where grayscale images, consisting of L* channel, are the inputs, and the corresponding color images are the targets which consists of two additional channels, A* and B*.
@@ -184,6 +195,19 @@ The approach involves building a convolutional neural network (CNN) that learns 
 
 </ul>
 
+
+<h3>References</h3>
+<ol>
+<li>
+R. Zhang, P. Isola, and A. A. Efros, "Colorful Image Colorization," Proceedings of the European Conference on Computer Vision (ECCV), pp. 649–666, 2016. [Online]. Available: https://arxiv.org/abs/1603.08511
+</li>
+<li>
+Y. Wu, P. Zhang, and C. Zhang, "Generative Colorization for Diverse Images," arXiv preprint arXiv:2108.08826, 2021. [Online]. Available: https://arxiv.org/abs/2108.08826
+</li>
+<li>
+A. Deshpande, J. Lu, M. Yeh, M. Jin, and D. Forsyth, "Learning Diverse Image Colorization," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 6837–6845, 2017. [Online]. Available: https://arxiv.org/abs/1612.01958
+</li>
+</ol>
 <!-- <br><br> -->
 
 <!-- Main Results Figure --> 
