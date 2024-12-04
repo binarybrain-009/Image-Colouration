@@ -113,7 +113,7 @@ In this project, we aim to conduct a comparative study of various deep learning 
           <strong>Encoder:</strong> This module captures the spatial features by applying multiple convolution layers followed by downsampling like max pooling. This helps in reducing the dimensions and extracts important features.</li>
           <li><strong>Lantent Representation:</strong> The encoder outputs a feature representation which is compact in nature and gives the most vital spatial and semantic information
           </li><li><strong>Decoder:</strong> The decoder takes the input from the encoder and performs upsampling with operations like transposed convolutions or interpolation. It thereby increases the spatial dimensions, performs convolutions to refine the features to output the finaloutput.
-          </li><li><strong>Output layer:</strong> We have a final convolution layer that outputs the desired output which is in the form of a RGB image.</strong>
+          </li><li><strong>Output layer:</strong> We have a final convolution layer that outputs the desired output which is in the form of a 2-dimensional AB channel. This output is concatenated with the L channel to produce a LAB image which is then converted to an RGB image.</strong>
         </li>
       </ul>
     </li>
@@ -125,9 +125,9 @@ In this project, we aim to conduct a comparative study of various deep learning 
         <li>
           <strong>Encoder: </strong> Similar to the Encoder-Decoder module, the Encoder in UNet captures importatant spatial features, reducing the image size while extracting important features. Here we replace the traditional encoder with a ResNet-18 architecture. ResNet-18 consists of convolutional layers and skip connections (in the form of residual blocks) that help to learn deeper representations without having the vanishing gradient problem.  
         </li><li><strong>Connection: </strong> The deepest part of the UNet from the encoder gets connected to the decoder, which has captured the most important spatial features
-        </li><li><strong>Decoer: </strong> This model performs upsamling and recaptures the image resolution by concantenating them with corresponding feature maps from encoder.
+        </li><li><strong>Decoder: </strong> This model performs upsamling and recaptures the image resolution by concantenating them with corresponding feature maps from encoder.
       </li><strong>Skip Connections: </strong> The skips connections link the encoder layer to the corresponding decoder layers, which preserves fine-grained spatial features which get lost during the downsampling operation. 
-    </li><strong>Training: </strong> We used predefined weights from ImageNet using the Fast AI library. THe UNet was then trained using the Adam optimizer for 20 epochs with L1 loss as the criterion, since it - preserves spatial structure, it is robust to any outliers and has a better gradient flow. 
+    </li><strong>Training: </strong> The UNet was trained using the Adam optimizer for 20 epochs with L1 loss as the criterion, since it - preserves spatial structure, it is robust to any outliers and has a better gradient flow. 
     </li>
       </ul>
     </li>
@@ -238,9 +238,9 @@ In this project, we aim to conduct a comparative study of various deep learning 
       <li><strong>Epoch: </strong> We have tried to use the number of epochs for getting better accuracy but also making sure we do not overfit any model. Hence for training the UNet we used 20 epochs, after which we were seeing results getting converged with no frther reductions in losses. Similarly for cGAN, we kept the epoch numbers to 20 so that the generator does not overflow and discriminator does not overfit.</li>
       <li><strong>Learning Rate: </strong> Since learning rate is a vital parameter in training neural networks since they control by how much the weights should be adjusted, we kept it as 0.01 so as to avoid any irregularities and unstable updates that would have destabilized the training.</li>
       <li><strong>Beta1: </strong> Beta1 used in training the GAN is also a important parameter for the ADAM optimizer to take into account past weight updates for the current weights. We kept it as 0.5 to prevent any rapid updates, which allowed for stable training especially in earlier stages.</li>
-      <li><strong>Criterion: </strong> We used L1 loss as the criterion for training because it allows for pixelwise accuracy which hlps in generating realistic images. We used the BCE loss for training the GAN which is a common method, the discriminator learns to differentiate between real and fake images and generator is given the taks to fool the discriminator into classfying the generated images as real ones. </li>
+      <li><strong>Criterion: </strong> We used L1 loss as the criterion for training because it allows for pixelwise accuracy which helps in generating realistic images. We used the BCE loss for training the GAN which is a common method, the discriminator learns to differentiate between real and fake images and generator is given the taks to fool the discriminator into classfying the generated images as real ones. </li>
       <li><strong>Batch Size: </strong> The batch size allows the neural network to update the weights in batches (controls the frequency as to when weights are updated). Since larger batch size required more memory and smaller ones lead to noiser gradients, we set the batch size as 32. </li>
-      <li><strong>Noise Dimension: </strong> The noise dimension provides the size of random noise fed to the generator, larger ones lead to overfitting but help generate more creative and realistic images. We kept it as 100, which is usually used in GANs to provide more diversity.  </li>
+      <!-- <li><strong>Noise Dimension: </strong> The noise dimension provides the size of random noise fed to the generator, larger ones lead to overfitting but help generate more creative and realistic images. We kept it as 100, which is usually used in GANs to provide more diversity.  </li> -->
     </ul>
 
   <h3>Trends</h3>
@@ -273,8 +273,8 @@ In this project, we aim to conduct a comparative study of various deep learning 
     <li><strong>Higher-Resolution Models:</strong> Incorporating super-resolution techniques or adapting the model for higher-resolution inputs could enhance the fine details in the colorized images.</li>
     <li><strong>Diffusion Models:</strong> Diffusion models are state of the art image generation models which iteratively take noisy or partially incomplete images and refine them to produce a high-quality output. 
       <ul>
-        <li>Models like Denoising Diffusion Probabilistic Models (DDPMs) can be used, which add noise to images in the feed forward process and learns to reverse this during the training period. DDPM and Guided Diffusion are some framework that will be explored in future.</li>
-        <li>Another set of these models are Latent Diffusion Models (LDM), which compress and compute the predictions in a compressed data space making them more efficient during computation. Stable Diffusion which are state of the art (SOTA) models nowadays, can be used to generate more realistic images.</li>
+        <li>Models like Denoising Diffusion Probabilistic Models (DDPMs) [11] can be used, which add noise to images in the feed forward process and learns to reverse this during the training period. DDPM and Guided Diffusion [12] are some framework that can be explored in future.</li>
+        <li>Another set of these models are Latent Diffusion Models (LDM) [13], which compress and compute the predictions in a compressed data space making them more efficient during computation. Stable Diffusion which are state of the art (SOTA) models nowadays, can be used to generate more realistic images.</li>
       </ul>
     </li>
   </ul>
@@ -317,6 +317,15 @@ Howard J, Gugger S. Fastai: A Layered API for Deep Learning. Information. 2020; 
 <li>
 I. Goodfellow, J. Pouget-Abadie, M. Mirza, B. Xu,
   D. Warde-Farley, S. Ozair, A. Courville, and Y. Bengio. Generative adversarial nets. In NIPS, 2014.
+</li>
+<li>
+Ho, Jonathan, Ajay Jain, and Pieter Abbeel. "Denoising diffusion probabilistic models." Advances in neural information processing systems 33 (2020): 6840-6851.
+</li>
+<li>
+Dhariwal, Prafulla, and Alexander Nichol. "Diffusion models beat gans on image synthesis." Advances in neural information processing systems 34 (2021): 8780-8794.
+</li>
+<li>
+Rombach, Robin, et al. "High-resolution image synthesis with latent diffusion models." Proceedings of the IEEE/CVF conference on computer vision and pattern recognition. 2022.
 </li>
 </ol>
 <!-- <br><br> -->
