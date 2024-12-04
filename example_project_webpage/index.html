@@ -108,16 +108,46 @@ In this project, we aim to conduct a comparative study of various deep learning 
   <ul>
     <li>
       <strong>CNN Encoder-Decoder:</strong> We started with a simple encoder-decoder CNN architecture as our baseline. The encoder extracted latent grayscale features, while the decoder reconstructed the A* and B* color channels. This model served as a foundational benchmark for further comparisons.
-    </li>
-    <li>
-      <strong>U-Net with ResNet-18 Backbone:</strong> The U-Net architecture, with a ResNet-18 backbone in the encoder, was the second phase of our approach. Pre-trained weights from ImageNet were loaded into the encoder to leverage transfer learning, enhancing the model's ability to extract meaningful features. The pre-trained U-Net was fine-tuned on our dataset for 20 epochs to adapt to the specific task of image colorization.
-    </li>
-    <li>
-      <strong>Conditional GAN:</strong> The pre-trained U-Net was integrated as the generator in a Conditional GAN (cGAN) framework. cGANs were chosen because they condition the output (colorized image) on the input (grayscale image), enabling the generator to produce outputs that are contextually consistent with the input image.
       <ul>
-        <li><strong>PatchGAN Discriminator:</strong> We used a PatchGAN discriminator, which evaluates the realism of small image patches rather than the entire image. This approach ensures local coherence, as the discriminator classifies each patch of the generated image as real or fake. PatchGAN was chosen because it is effective in preserving fine details and textures, which are critical for realistic image colorization.</li>
+        <li>
+          <strong>Encoder:</strong> This module captures the spatial features by applying multiple convolution layers followed by downsampling like max pooling. This helps in reducing the dimensions and extracts important features.</li>
+          <li><strong>Lantent Representation:</strong> The encoder outputs a feature representation which is compact in nature and gives the most vital spatial and semantic information
+          </li><li><strong>Decoder:</strong> The decoder takes the input from the encoder and performs upsampling with operations like transposed convolutions or interpolation. It thereby increases the spatial dimensions, performs convolutions to refine the features to output the finaloutput.
+          </li><li><strong>Output layer:</strong> We have a final convolution layer that outputs the desired output which is in the form of a RGB image.</strong>
+        </li>
       </ul>
     </li>
+
+    <br>
+    <li>
+      <strong>U-Net with ResNet-18 Backbone:</strong> The U-Net architecture, with a ResNet-18 backbone in the encoder, was the second phase of our approach. Pre-trained weights from ImageNet were loaded into the encoder to leverage transfer learning, enhancing the model's ability to extract meaningful features. The pre-trained U-Net was fine-tuned on our dataset for 20 epochs to adapt to the specific task of image colorization.
+      <ul>
+        <li>
+          <strong>Encoder: </strong> Similar to the Encoder-Decoder module, the Encoder in UNet captures importatant spatial features, reducing the image size while extracting important features. Here we replace the traditional encoder with a ResNet-18 architecture. ResNet-18 consists of convolutional layers and skip connections (in the form of residual blocks) that help to learn deeper representations without having the vanishing gradient problem.  
+        </li><li><strong>Connection: </strong> The deepest part of the UNet from the encoder gets connected to the decoder, which has captured the most important spatial features
+        </li><li><strong>Decoer: </strong> This model performs upsamling and recaptures the image resolution by concantenating them with corresponding feature maps from encoder.
+      </li><strong>Skip Connections: </strong> The skips connections link the encoder layer to the corresponding decoder layers, which preserves fine-grained spatial features which get lost during the downsampling operation. 
+    </li><strong>Training: </strong> We used predefined weights from ImageNet using the Fast AI library. THe UNet was then trained using the Adam optimizer for 20 epochs with L1 loss as the criterion, since it - preserves spatial structure, it is robust to any outliers and has a better gradient flow. 
+    </li>
+      </ul>
+    </li>
+
+    <center><img src="Images/UNet Arch.png" alt="UNet Architecture" class="custom-img"></center>
+    
+    <br>
+    <li>
+      <strong>DCGAN:</strong> The pre-trained U-Net was integrated as the generator in a Deep Convolutional GAN (DCGAN) framework. DCGANs were chosen because they condition the output (colorized image) on the input (grayscale image), enabling the generator to produce outputs that are contextually consistent with the input image.
+      <ul>
+        <li><strong>PatchGAN Discriminator:</strong> We used a PatchGAN discriminator, which evaluates the realism of small image patches rather than the entire image. This approach ensures local coherence, as the discriminator classifies each patch of the generated image as real or fake. PatchGAN was chosen because it is effective in preserving fine details and textures, which are critical for realistic image colorization.</li>
+        <li><strong>Generator:</strong> The DCGAN uses the UNet module as it's generator output. It creates images using the UNet module by effectively capturing spatial dimensions with skip layers. This enables accurate mappings from grayscale to colorized outputs.
+        </li><li> <strong>Discriminator: </strong> This is a custom CNN module which differentiates between the real images or generated ones. This assesses the authenticity, which makes use of convolutions to differentiate between real or generated real and generated colorizations.
+        </li><li><strong>Training: </strong> We trained the DCGAN using BCE Loss for 10 epochs. We used the adam optimizer again for training the discriminator with decay rate taken as 0.9.</li> 
+      </ul>
+    </li>
+
+    <center><img src="Images/GAN Arch.png" alt="GAN Architecture" class="custom-img"></center>
+
+
   </ul>
 
   <h3>Implementation Details</h3>
@@ -160,15 +190,23 @@ In this project, we aim to conduct a comparative study of various deep learning 
 
   <h3>Results</h3>
   <ul>
-    <li><strong>CNN Encoder-Decoder:</strong> Achieved baseline results with limited ability to capture complex features, showing noticeable artifacts in the colorized outputs.</li>
-    <li><strong>U-Net with ResNet-18 Backbone:</strong> Improved performance compared to the baseline, with enhanced feature extraction and better contextual colorization.</li>
-    <li><strong>Conditional GAN:</strong> Produced the most realistic and visually consistent outputs. The incorporation of adversarial loss with the PatchGAN discriminator significantly reduced artifacts and improved local color coherence.</li>
+    <li><strong>CNN Encoder-Decoder:</strong> Achieved baseline results with limited ability to capture complex features, showing noticeable artifacts in the colorized outputs. We got a validation loss of 0.0836 after training it for 10 epochs. We trained the module using the L1 loss criterion with learning rate set as 0.001.</li>
+    <li><strong>U-Net with ResNet-18 Backbone:</strong> Improved performance compared to the baseline, with enhanced feature extraction and better contextual colorization. The UNet was trained for 20 epochs and acheieved a L1 loss of 0.081 . We set the learning rate to 0.0001</li>
+    <li><strong>Conditional GAN:</strong> Produced the most realistic and visually consistent outputs. The incorporation of adversarial loss with the PatchGAN discriminator significantly reduced artifacts and improved local color coherence. We achieved a discriminator loss of 0.1067 and discriminator loss of 4.5 after training for 10 epochs. We also tried regularization using Wasserstein Loss that was used by the Discriminator to evaluate whether the generated image is real or fake. We got a greater accuracy with both the Discriminator and Generator loss converging with losses of around 0.003.</li>
   </ul>
 
   <h3>Parameter Analysis</h3>
     Adjusting the patch size in the PatchGAN discriminator affected the realism of local features.
     Larger patches reduced sensitivity to finer details, while smaller patches improved local
     consistency at the expense of global structure.
+    <ul>
+      <li><strong>Epoch: </strong> We have tried to use the number of epochs for getting better accuracy but also making sure we do not overfit any model. Hence for training the UNet we used 20 epochs, after which we were seeing results getting converged with no frther reductions in losses. Similarly for DCGAN, we kept the epoch numbers to 10 so that the generator does not overflow and discriminator does not overfit.</li>
+      <li><strong>Learning Rate: </strong> Since learning rate is a vital parameter in training neural networks since they control by how much the weights should be adjusted, we kept it as 0.01 so as to avoid any irregularities and unstable updates that would have destabilized the training.</li>
+      <li><strong>Beta1: </strong> Beta1 used in training the GAN is also a important parameter for the ADAM optimizer to take into account past weight updates for the current weights. We kept it as 0.5 to prevent any rapid updates, which allowed for stable training especially in earlier stages.</li>
+      <li><strong>Criterion: </strong> We used L1 loss as the criterion for training because it allows for pixelwise accuracy which hlps in generating realistic images. We used the BCE loss for training the GAN which is a common method, the discriminator learns to differentiate between real and fake images and generator is given the taks to fool the discriminator into classfying the generated images as real ones. </li>
+      <li><strong>Batch Size: </strong> The batch size allows the neural network to update the weights in batches (controls the frequency as to when weights are updated). Since larger batch size required more memory and smaller ones lead to noiser gradients, we set the batch size as 32. </li>
+      <li><strong>Noise Dimension: </strong> The noise dimension provides the size of random noise fed to the generator, larger ones lead to overfitting but help generate more creative and realistic images. We kept it as 100, which is usually used in GANs to provide more diversity.  </li>
+    </ul>
 
   <h3>Trends</h3>
     The progression from a simple encoder-decoder to the U-Net and GAN demonstrated a clear
