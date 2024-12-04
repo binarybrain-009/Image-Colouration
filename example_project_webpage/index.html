@@ -51,7 +51,7 @@ color: #FF9900;
 
 <!-- Goal -->
 <h2>Abstract</h2>
-Automatic image coloration is a challenging problem in computer vision, motivated by its potential applications in image restoration, enhancement, and creative tasks. This project explores the performance of various deep learning architectures in transforming grayscale images into realistic color versions, aiming to understand the theoretical underpinnings and practical performance of these models. The approach involves experimenting with a progression of architectures: a simple CNN-based encoder-decoder, a U-Net with pre-trained VGG/ResNet backbones, and GAN-based frameworks incorporating adversarial loss. Preliminary results indicate that as model complexity increases, the generated images exhibit improved color fidelity and realism, highlighting the potential of GANs in achieving context-aware and high-quality colorization.
+Automatic image coloration is a challenging problem in computer vision, motivated by its potential applications in image restoration, enhancement, and creative tasks. This project explores the performance of various deep learning architectures in transforming grayscale images into realistic color versions, aiming to understand the theoretical underpinnings and practical performance of these models. The approach involves experimenting with a progression of architectures: a simple CNN-based encoder-decoder, a U-Net with a pre-trained ResNet backbone, and a conditional GAN with the aforementioned U-Net as the generator, incorporating adversarial loss. Preliminary results indicate that as model complexity increases, the generated images exhibit improved color fidelity and realism, highlighting the potential of GANs in achieving context-aware and high-quality colorization. We observe an improvement in Mean Absolute Error (MAE) from 0.0848 for the CNN-based Encoder-Decoder to 0.0807 for cGAN. Similarly we also observe an improvement Learned Perceptual Image Patch Similarity (LPIPS) score (using VGG) from 0.148 for the CNN-based Encoder-Decoder to 0.132 for cGAN.   
 <!-- Plans for experiments. Describe the experimental setup you will follow. Describe the datasets you
 plan to use, what code you will implement yourself, what existing code you will borrow (if any), and
 what you would define as a success for the project. If you intend to collect your own data, provide a
@@ -92,14 +92,14 @@ In this project, we aim to conduct a comparative study of various deep learning 
 
 <section id="approach">
   <h2>Approach</h2>
-  To solve the problem of automatic image coloration, we employed a progressive approach involving multiple architectures. This approach was designed to analyze and compare the effectiveness of various models in transforming grayscale images into realistic colorized versions. The process included data preprocessing and three main modeling phases: baseline CNN encoder-decoder, U-Net architecture with a ResNet-18 backbone, and a Conditional GAN (cGAN) with a PatchGAN discriminator.
+  To solve the problem of automatic image coloration, we employed a progressive approach involving multiple architectures. This approach was designed to analyze and compare the effectiveness of various models in transforming grayscale images into realistic colorized versions. The process included data preprocessing and three main modeling phases: baseline CNN encoder-decoder, U-Net architecture with a ResNet-18 backbone, and a Conditional GAN (cGAN) with a PatchGAN discriminator [4].
 
   <h3>Data Preprocessing</h3>
   <ul>
     <li>The images from the COCO dataset were converted into the Lab color space, where the L* channel (lightness) represents grayscale information, and the A* and B* channels encode color information.</li>
     <li>The L* channel was used as the input to the model, while the A* and B* channels served as the ground truth outputs for supervised learning.</li>
-    <li>To ensure consistency, all images were resized to 256x256 pixels and normalized to a range suitable for deep learning models.</li>
-    <li>Data augmentation techniques such as random cropping, flipping, and rotation were applied to enhance model generalization and robustness.</li>
+    <li>To ensure consistency, all images were resized to 256x256 pixels and normalized to a range between -1 and 1 for both input L channel and output AB channel.</li>
+    <li>Random horizontal flipping was applied to the images before breakdown into L and AB channel to enhance model generalization and robustness.</li>
   </ul>
   <br>
   <img src="Images/LAB.png" alt="Trulli" class="custom-img"/>
@@ -185,7 +185,7 @@ In this project, we aim to conduct a comparative study of various deep learning 
   <h3>Experimental Setup</h3>
   <ul>
     <li><strong>Datasets:</strong> A subset of the COCO dataset with 10,000 images. The training set consisted of 8,000 images, and the test set included 2,000 images.</li>
-    <li><strong>Metrics:</strong> Mean Squared Error (MSE) was used to evaluate pixel-wise accuracy. Intersection over Union (IoU) was employed to measure the structural similarity between ground truth and generated images.</li>
+    <li><strong>Metrics:</strong> L1 Error was used to evaluate pixel-wise accuracy during training. Mean Absolute Error (MAE) and Learned Perceptual Image Patch Similarity (LPIPS) score (using latent features from pretrained VGG) [7] are used to quantitatively compare the model performances.</li>
   </ul>
 
   <h3>Results</h3>
@@ -193,7 +193,47 @@ In this project, we aim to conduct a comparative study of various deep learning 
     <li><strong>CNN Encoder-Decoder:</strong> Achieved baseline results with limited ability to capture complex features, showing noticeable artifacts in the colorized outputs. We got a validation loss of 0.0836 after training it for 10 epochs. We trained the module using the L1 loss criterion with learning rate set as 0.001.</li>
     <li><strong>U-Net with ResNet-18 Backbone:</strong> Improved performance compared to the baseline, with enhanced feature extraction and better contextual colorization. The UNet was trained for 20 epochs and acheieved a L1 loss of 0.081 . We set the learning rate to 0.0001</li>
     <li><strong>Conditional GAN:</strong> Produced the most realistic and visually consistent outputs. The incorporation of adversarial loss with the PatchGAN discriminator significantly reduced artifacts and improved local color coherence. We achieved a discriminator loss of 0.1067 and discriminator loss of 4.5 after training for 10 epochs. We also tried regularization using Wasserstein Loss that was used by the Discriminator to evaluate whether the generated image is real or fake. We got a greater accuracy with both the Discriminator and Generator loss converging with losses of around 0.003.</li>
+    <img src="Images/GAN Arch.png" alt="Trulli" class="custom-img"/>
+    <img src="Images/UNet Arch.png" alt="Trulli" class="custom-img"/>
+  
+    The MAE and LPIPS value on the test dataset for each model is listed in Table 1.
+
+    <h5>Table 1: Results</h5>
+    <table border="1" style="border-collapse: collapse; width: 50%;">
+      <thead>
+          <tr>
+              <th>Model</th>
+              <th>MAE</th>
+              <th>LPIPS</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td>CNN Encoder-Decoder</td>
+              <td>0.0848</td>
+              <td>0.148</td>
+          </tr>
+          <tr>
+              <td>U-Net (ResNet-18 backbone)</td>
+              <td>0.0846</td>
+              <td>0.141</td>
+          </tr>
+          <tr>
+            <td>cGAN</td>
+            <td>0.0807</td>
+            <td>0.132</td>
+        </tr>
+      </tbody>
+  </table>
   </ul>
+
+  Outputs by each model on 5 sample images from the test dataset are listed below:
+
+  <img src="Images/result_1.png" alt="Trulli" class="custom-img"/>
+  <img src="Images/result_2.png" alt="Trulli" class="custom-img"/>
+  <img src="Images/result_3.png" alt="Trulli" class="custom-img"/>
+  <img src="Images/result_4.png" alt="Trulli" class="custom-img"/>
+  <img src="Images/result_5.png" alt="Trulli" class="custom-img"/>
 
   <h3>Parameter Analysis</h3>
     Adjusting the patch size in the PatchGAN discriminator affected the realism of local features.
@@ -243,9 +283,6 @@ In this project, we aim to conduct a comparative study of various deep learning 
     coloration, paving the way for more robust and application-specific advancements in the field.
 </section>
 <section id='to-do'>
-  <li>
-  put the result sin the abstract.
-  </li>
 <li>
   add three model architeures that we used unet and GAN-Tushar
 </li>
@@ -279,6 +316,21 @@ Y. Wu, P. Zhang, and C. Zhang, "Generative Colorization for Diverse Images," arX
 </li>
 <li>
 A. Deshpande, J. Lu, M. Yeh, M. Jin, and D. Forsyth, "Learning Diverse Image Colorization," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 6837–6845, 2017. [Online]. Available: https://arxiv.org/abs/1612.01958
+</li>
+<li>
+Isola, Phillip, et al. "Image-to-image translation with conditional adversarial networks." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017.
+</li>
+<li>
+C. Li and M. Wand. Precomputed real-time texture synthesis with markovian generative adversarial networks. ECCV, 2016
+</li>
+<li>
+O. Ronneberger, P. Fischer, and T. Brox. U-net: Convolutional networks for biomedical image segmentation. In MICCAI, 2015
+</li>
+<li>
+Zhang, R., Isola, P., Efros, A. A., Shechtman, E., and Wang,
+  O. The unreasonable effectiveness of deep features as a
+  perceptual metric. In Proceedings of the IEEE conference
+  on computer vision and pattern recognition, 2018.
 </li>
 </ol>
 <!-- <br><br> -->
